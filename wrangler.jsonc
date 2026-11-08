@@ -8,9 +8,25 @@
 	"main": "src/index.ts",
 	"compatibility_date": "2026-11-04",
 	"observability": {
-		"enabled": true
+		"enabled": true,
 	},
-	"upload_source_maps": true
+	"upload_source_maps": true,
+	"compatibility_flags": ["nodejs_compat"],
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "members-db",
+			"database_id": "592b608e-6e4b-4f55-b805-47918700db4c",
+		},
+	],
+	"queues": {
+		"producers": [
+			{
+				"queue": "mail-queue",
+				"binding": "mail_queue",
+			},
+		],
+	},
 	/**
 	 * Smart Placement
 	 * https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
