@@ -11,15 +11,13 @@ app.use(express.json());
 app.get('/', (req, res) => {
 	res.json({ message: 'Express.js running on Cloudflare Workers!' });
 });
-app.get('/sendmail/:user', async (req, res) => {
-	// const workerUrl = 'https://q-consumer.mohammedarafat.workers.dev';
-	// // const workerUrl = 'http://127.0.0.1:8787';
-	// const resp = await fetch(`${workerUrl}/`, {
-	// 	method: 'POST',
-	// 	body: JSON.stringify({ to: 'mansurianas983@gmail.com',subject:"OTP Verification",user:req.params["user"],otp:1234 }),
-	// 	headers: { 'Content-Type': 'application/json' },
-	// });
-	await env.mail_queue.send({ to: 'mansurianas983@gmail.com', subject: 'OTP Verification', user: req.params['user'], otp: 1234 });
+app.post('/sendmail', async (req, res) => {
+	const { to, subject, user } = req.body;
+	if (!to || !subject || !user) {
+		return res.status(400).json({ error: 'All required fields' });
+	}
+	const from = env.MAILGUN_DOMAIN;
+	await env.mail_queue.send({ to, subject, user, otp: Math.floor(Math.random() * 1000000), from });
 	res.json({ message: 'Email sent successfully!' });
 });
 
