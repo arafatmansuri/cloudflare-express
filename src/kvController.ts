@@ -7,7 +7,7 @@ export const createKV: (req: Request, res: Response) => Promise<void> = async (r
 		res.status(400).json({ error: 'Key and value are required' });
 		return;
 	}
-	await env.kv1.put(key, value);
+	await env.kv1.put(key, value, { expiration: 60 * 5, expirationTtl: 60 * 5, metadata: { createdAt: new Date() } }); // Set expiration to 5 minutes
 	res.json({ message: 'Value stored in KV successfully!' });
 };
 export const getKV: (req: Request, res: Response) => Promise<void> = async (req, res) => {
@@ -16,8 +16,8 @@ export const getKV: (req: Request, res: Response) => Promise<void> = async (req,
 		res.status(400).json({ error: 'Key is required' });
 		return;
 	}
-	const value = await env.kv1.get(key);
-	res.json({ message: `${value ? 'Value found in KV' : 'Value not found in KV'}`, value: value ? value : null });
+	const value = await env.kv1.getWithMetadata(key);
+	res.json({ message: `${value ? 'Value found in KV' : 'Value not found in KV'}`, value: value.value ? value : null });
 };
 export const getKVList: (req: Request, res: Response) => Promise<void> = async (req, res) => {
 	const allKeys = await env.kv1.list();
